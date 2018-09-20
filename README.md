@@ -79,10 +79,18 @@ I need to do more testing to confirm.
 Convert the signal you want to send as a hex value representing the symbols in the signal where
 a 1 is a HIGH symbol and a 0 is a LOW symbol.
 
-	device.setFreq(916800000)
-	device.setMdmModulation(MOD_2FSK)
-	device.setMdmDeviatn(50000)
-	device.setMdmSyncMode(0)
-	device.setMdmDRate(6250)
-	device.setMaxPower()
-	device.RFxmit(data=pwm_signal_bytes)
+	import sys
+	from rflib import *
+	
+	def init(device):
+		device.setFreq(916800000)
+		device.setMdmModulation(MOD_2FSK)
+		device.setMdmDeviatn(50000)
+		device.setMdmSyncMode(0)
+		device.setMdmDRate(6250)
+		device.setMaxPower()
+		# device.printRadioConfig()
+	
+	r = RfCat()
+	init(r)
+	r.RFxmit(data=pwm_signal_bytes)
