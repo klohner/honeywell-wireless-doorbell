@@ -39,10 +39,11 @@ data in the frame.
 	# XXXX XXXX XXXX XXXX XXXX .... .... .... .... .... .... .... KEY ID (different for each transmitter)
 	# .... .... .... .... .... 0000 00.. 0000 0000 00.. 000. .... KEY UNKNOWN 0 (always 0 in devices I've tested)
 	# .... .... .... .... .... .... ..XX .... .... .... .... .... DEVICE TYPE (10 = doorbell, 01 = PIR Motion sensor)
+	# .... .... .... .... .... .... .... .... .... ..XX ...X XXX. FLAG DATA (may be changed for possible effects on receiver)
 	# .... .... .... .... .... .... .... .... .... ..XX .... .... ALERT (00 = normal, 01 or 10 = right-left halo light pattern, 11 = full volume alarm)
 	# .... .... .... .... .... .... .... .... .... .... ...X .... SECRET KNOCK (if doorbell is pressed 3x rapidly)
 	# .... .... .... .... .... .... .... .... .... .... .... X... RELAY (1 if signal is a retransmission of a received transmission, only some models)
-	# .... .... .... .... .... .... .... .... .... .... .... .X.. IGNORED (0 = default, but 1 is accepted and I don't oberserve any difference)
+	# .... .... .... .... .... .... .... .... .... .... .... .X.. FLAG UNKNOWN (0 = default, but 1 is accepted and I don't oberserve any difference)
 	# .... .... .... .... .... .... .... .... .... .... .... ..X. LOWBAT (1 if battery is low, receiver gives low battery alert)
 	# .... .... .... .... .... .... .... .... .... .... .... ...X CHKSUM (LSB of count of set bits in previous 23 bits)
 
