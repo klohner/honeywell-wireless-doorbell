@@ -74,7 +74,7 @@ becomes out of sync and not receiving the next frame properly, then only syncing
 subsequent frame.  I think it's also completely missing either the first or last frame as well.
 I need to do more testing to confirm.
 
-## Transmitting the signal using a Yard Stick One
+## Transmitting a signal using a Yard Stick One
 
 Convert the signal you want to send as a hex value representing the symbols in the signal where
 a 1 is a HIGH symbol and a 0 is a LOW symbol.
