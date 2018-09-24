@@ -94,8 +94,10 @@ symbol pulse bits represented in hex:
 And this seems to work pretty well to pick up the signal frame data as hex:
 
 	rtl_433 -f 916800000 -q -X "Honeywell:FSK_PWM_RAW:240:480:400,bits=49,invert,match={4}0x8"
+		
+Note the "invert" option is specified to provide a decoding consistent with this document.
 
-And this seems to work pretty well to pick up the whole signal with frame data in rows as hex:
+This seems to work pretty well to pick up the whole signal with frame data in rows as hex:
 
 	rtl_433 -f 916800000 -q -X "Honeywell:FSK_PWM_RAW:240:400:560,bits=49,invert,match={4}0x8"
 
