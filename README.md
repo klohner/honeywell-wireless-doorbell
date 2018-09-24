@@ -5,9 +5,19 @@ An attempt to capture and decode the signals used by the North American
 Honeywell RCWL300A, RCWL330A, Series 3, 5, 9 and Decor Series Wireless Chimes.
 These units operate at 916.8 MHz.
 
-I'm using rtl_433 to receive and demodulate the signal.
+I'm using `rtl_433` to receive and demodulate the signal.
 
 I'm also able to transmit valid signals using the Yard Stick One.
+
+### Awesome! I have an RTL-SDR dongle and one of those doorbells and I want to help!
+
+You're the best!  I'm looking for as many valid signals as you can generate on
+your doorbell system to further decode the signal.  If you have `rtl_433` installed
+and working on your system, please see if you can receive the signal and send me
+the output you receive here:
+
+**[Submit My Doorbell Code To This Project](https://goo.gl/forms/SuxA3qgVRivXmNMf1)**
+
 
 ### Availability
 
@@ -87,7 +97,7 @@ be modified with the RELAY bit set.  This seems to be an effort to extend a sign
 distant receivers.
 
 
-## Detecting signals using rtl_433
+## Detecting signals using `rtl_433`
 
 This seems to work pretty well to pick up every other data frame in the signal as 
 symbol pulse bits represented in hex.  Note that the returned length of these frames
@@ -112,15 +122,15 @@ Note that these don't seem to pick up the all the data frames.  In my tests, it 
 pick up 24 of the 50 data frames in the signal before triggering 
 `pulse_FSK_detect(): Maximum number of pulses reached!` and ignoring the rest of the signal.
 
-It seems to be possible to also pick up the signal as OOK in rtl_433 by setting the frequency
-about 90 kHz away from the center of the FSK frequency.  This seems to force rtl_433 to only
+It seems to be possible to also pick up the signal as OOK in `rtl_433` by setting the frequency
+about 90 kHz away from the center of the FSK frequency.  This seems to force `rtl_433` to only
 see one half of the signal.  This command seems to work well to pick up the data frames.  It
 also has the benefit that when the maximum number of pulses is reached, it doesn't trigger
 an error and starts decoding data again immediately.
 
 	rtl_433 -f 916890000 -q -X Honeywell:OOK_PWM:160:320:560:400,bits=49,invert
 
-And finally, tuning low and allowing rtl_433 to guess the demodulation on its own, it will use
+And finally, tuning low and allowing `rtl_433` to guess the demodulation on its own, it will use
 `pulse_demod_pwm_precise()` and output a nice representation of the hex and bit values of the
 48-bit data frames.  However, it does seems to truncate after 24 rows of data frames.
 
