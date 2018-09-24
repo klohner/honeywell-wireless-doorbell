@@ -29,7 +29,7 @@ Because it is using digital symbols over 2FSK modulation, it essentially
 looks like two separate, simultaneous, out-of-phase OOK transmissions 
 100 kHz away from each other, at 916.75 MHz and and 916.85 MHz.
 
-If you choose to look at only one of those frequencies for an OOK transmission, 
+If you choose to visually look at only one of those frequencies as an OOK transmission, 
 choose the higher 916.85 MHz frequency, since its phase will represent a 
 "LOW" symbol as a low level on the waveform, and a "HIGH" symbol will look like
 a high level.
@@ -84,30 +84,46 @@ received signal if the RELAY bit is NOT set.  The data in the retransmitted sign
 be modified with the RELAY bit set.  This seems to be an effort to extend a signal to more
 distant receivers.
 
+
 ## Detecting signals using rtl_433
 
 This seems to work pretty well to pick up every other data frame in the signal as 
-symbol pulse bits represented in hex:
+symbol pulse bits represented in hex.  Note that the returned length of these frames
+is 149 bits (symbols) because it is decoding the frame's "HIGH-HIGH-HIGH" postamble
+into three "1" bits (symbols).
 
-	rtl_433 -f 916800000 -q -X "Honeywell:FSK_PCM:160:160:400,bits=149,match={4}0xe"
+	rtl_433 -f 916800000 -q -X Honeywell:FSK_PCM:160:160:400,bits=149,match={4}0xe
 
-And this seems to work pretty well to pick up the signal frame data as hex:
+And this seems to work pretty well to pick up the signal frame data as hex. Note that the 
+returned length of these frames is 49 bits because it is decoding the frame's "HIGH-HIGH-HIGH" 
+postamble as a "1" bit.
 
-	rtl_433 -f 916800000 -q -X "Honeywell:FSK_PWM_RAW:240:480:400,bits=49,invert,match={4}0x8"
+	rtl_433 -f 916800000 -q -X Honeywell:FSK_PWM_RAW:240:480:400,bits=49,invert,match={4}0x8
 		
 Note the "invert" option is specified to provide a decoding consistent with this document.
 
 This seems to work pretty well to pick up the whole signal with frame data in rows as hex:
 
-	rtl_433 -f 916800000 -q -X "Honeywell:FSK_PWM_RAW:240:400:560,bits=49,invert,match={4}0x8"
+	rtl_433 -f 916800000 -q -X Honeywell:FSK_PWM_RAW:240:400:560,bits=49,invert
 
 Note that these don't seem to pick up the all the data frames.  In my tests, it only seems to
-pick up 24 of the 50 data frames in the signal.
+pick up 24 of the 50 data frames in the signal before triggering 
+`pulse_FSK_detect(): Maximum number of pulses reached!` and ignoring the rest of the signal.
 
-It seems like rtl_433 is looking for the "LOW-LOW-LOW" preamble as the gap between frames, then 
-becomes out of sync and not receiving the next frame properly, then only syncing back up to get the
-subsequent frame.  I think it's also completely missing either the first or last frame as well.
-I need to do more testing to confirm.
+It seems to be possible to also pick up the signal as OOK in rtl_433 by setting the frequency
+about 90 kHz away from the center of the FSK frequency.  This seems to force rtl_433 to only
+see one half of the signal.  This command seems to work well to pick up the data frames.  It
+also has the benefit that when the maximum number of pulses is reached, it doesn't trigger
+an error and starts decoding data again immediately.
+
+	rtl_433 -f 916890000 -q -X Honeywell:OOK_PWM:160:320:560:400,bits=49,invert
+
+And finally, tuning low and allowing rtl_433 to guess the demodulation on its own, it will use
+`pulse_demod_pwm_precise()` and output a nice representation of the hex and bit values of the
+48-bit data frames.  However, it does seems to truncate after 24 rows of data frames.
+
+	rtl_433 -f 916710000 -q -R 0 -A
+
 
 ## Transmitting a signal using a Yard Stick One
 
