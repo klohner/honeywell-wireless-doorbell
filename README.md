@@ -1,10 +1,19 @@
 # honeywell-wireless-doorbell
 
 ## What is this?
-An attempt to capture and decode the signals used by the
+An attempt to capture and decode the signals used by the North American
 Honeywell RCWL300A, RCWL330A, Series 3, 5, 9 and Decor Series Wireless Chimes.
+These units operate at 916.8 MHz.
 
 I'm also attempting to transmit valid signals using the Yard Stick One.
+
+### Availability
+
+Although I've only tested on the North American models of this unit, it seems 
+that these doorbells are also available in U.K. model versions.  Those
+versions operate on 868 MHz.  These models are advertised as using
+"ActivLink" technology.  I've read that those models also use the same 
+transmission signal, though on that different frequency.
 
 ## The Wireless Signal
 The Honeywell wireless transmitter I have direct access to is the 
@@ -16,14 +25,34 @@ modulation with a 50 kHz deviation. The modulation rate seems
 to be 6250 baud, so each HIGH or LOW symbol is 160 microseconds 
 (μs).
 
+Because it is using digital symbols over 2FSK modulation, it essentially
+looks like two separate, simultaneous, out-of-phase OOK transmissions 
+100 kHz away from each other, at 916.75 MHz and and 916.85 MHz.
+
+If you choose to look at only one of those frequencies for an OOK transmission, 
+choose the higher 916.85 MHz frequency, since its phase will represent a 
+"LOW" symbol as a low level on the waveform, and a "HIGH" symbol will look like
+a high level.
+
 Data bits are encoded over three symbols.  A "0" bit is defined 
 as HIGH-LOW-LOW, and a "1" bit is defined as "HIGH-HIGH-LOW".
 
-The signal seems to be 50 repetitions of a 48-bit frame, each 
-frame begins with preamble of LOW-LOW-LOW and ends with postamble
-of HIGH-HIGH-HIGH.  
+Each frame of data consists of a LOW-LOW-LOW preamble, 48 bits of
+data, and a postamble of HIGH-HIGH-HIGH.
 
-The complete signal then seems to end with LOW-LOW-LOW, HIGH-HIGH-HIGH.
+The signal seems to be 50 consecutive repetitions of the frame, then
+symbols LOW-LOW-LOW-HIGH-HIGH-HIGH, and finally 2 continuous milliseconds (2000 μs) 
+of LOW.
+
+So, the duration of the entire 2FSK signal is 
+
+	(50 * ((1 + 48 + 1) * (3 * 160 μs))) + (6 * 160 μs) + 2000 μs
+	=
+	(2500 * 480 μs) + 960 μs + 2000 μs
+	=
+	1200000 μs + 2960 μs
+	=
+	1.202960 seconds
 
 ## The Data Frame
 
@@ -65,6 +94,10 @@ symbol pulse bits represented in hex:
 And this seems to work pretty well to pick up the signal frame data as hex:
 
 	rtl_433 -f 916800000 -q -X "Honeywell:FSK_PWM_RAW:240:480:400,bits=49,invert,match={4}0x8"
+
+And this seems to work pretty well to pick up the whole signal with frame data in rows as hex:
+
+	rtl_433 -f 916800000 -q -X "Honeywell:FSK_PWM_RAW:240:400:560,bits=49,invert,match={4}0x8"
 
 Note that these don't seem to pick up the all the data frames.  In my tests, it only seems to
 pick up 24 of the 50 data frames in the signal.
