@@ -5,13 +5,15 @@ An attempt to capture and decode the signals used by the North American
 Honeywell RCWL300A, RCWL330A, Series 3, 5, 9 and Decor Series Wireless Chimes.
 These units operate at 916.8 MHz.
 
-I'm also attempting to transmit valid signals using the Yard Stick One.
+I'm using rtl_433 to receive and demodulate the signal.
+
+I'm also able to transmit valid signals using the Yard Stick One.
 
 ### Availability
 
 Although I've only tested on the North American models of this unit, it seems 
 that these doorbells are also available in U.K. model versions.  Those
-versions operate on 868 MHz.  These models are advertised as using
+versions operate near 868 MHz.  These models are advertised as using
 "ActivLink" technology.  I've read that those models also use the same 
 transmission signal, though on that different frequency.
 
@@ -127,8 +129,8 @@ And finally, tuning low and allowing rtl_433 to guess the demodulation on its ow
 
 ## Transmitting a signal using a Yard Stick One
 
-Convert the signal you want to send as a hex value representing the symbols in the signal where
-a 1 is a HIGH symbol and a 0 is a LOW symbol.
+Convert the signal you want to send as a hex value representing the symbols in the 
+signal where a 1 bit is a HIGH symbol and a 0 bit is a LOW symbol.
 
 ```python
 import sys
