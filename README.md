@@ -18,6 +18,8 @@ the output you receive here:
 
 **[Submit My Doorbell Code To This Project](https://goo.gl/forms/SuxA3qgVRivXmNMf1)**
 
+Any kind of signal you can provide helps.  I'm especially interested in signals from the 
+motion detectors or other sensors used with this system.  
 
 ### Availability
 
