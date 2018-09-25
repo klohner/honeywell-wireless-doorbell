@@ -5,7 +5,7 @@
 An attempt to capture and decode the signals used by the North American
 Honeywell RCWL300A, RCWL330A, Series 3, 5, 9 and Decor Series Wireless Chimes.
 These units operate at 916.8 MHz. The protocol may be identical to European
-variats of these model devices, though those models may operate at or near
+variants of these model devices, though those models may operate at or near
 868 MHz.
 
 These devices are dissimilar to many other "dumb" wireless doorbells
@@ -59,7 +59,8 @@ Because it is using digital symbols over 2FSK modulation, it essentially
 looks like two separate, simultaneous, out-of-phase OOK transmissions 
 100 kHz away from each other, at 916.75 MHz and and 916.85 MHz.
 
-If you choose to visually look at only one of those frequencies as an OOK transmission, 
+If you choose to visually look at only one of those frequencies as an OOK transmission
+(such as with SDR# or gqrx), 
 it may make sense to choose the higher 916.85 MHz frequency, since its phase will 
 represent a "LOW" symbol as a low level on the waveform, and a "HIGH" symbol will 
 look like a high level.
