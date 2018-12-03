@@ -51,6 +51,16 @@ Those versions operate near 868 MHz amd are advertised as using "ActivLink"
 technology. I've read indications that those models also use the same
 transmission signal, though on that different frequency.
 
+## Hardware inside the Honeywell doorbell transmitter
+
+User [tos7](https://www.rtl-sdr.com/forum/memberlist.php?mode=viewprofile&u=1539)
+has [detailed on an rtl-sdr.com forum](https://www.rtl-sdr.com/forum/viewtopic.php?t=1138) 
+that the button contains a PIC Micro controller and a Transmitter chip.
+
+- [PIC16F505](https://www.microchip.com/wwwproducts/en/PIC16F505)
+
+- [FSK Transmitter - 868/915 MHz TH72031](https://www.melexis.com/en/product/TH72031/FSK-Transmitter)
+
 ## The Wireless Signal
 
 The Honeywell wireless transmitter I have direct access to is the RPWL400W,
@@ -64,18 +74,20 @@ microseconds (μs).
 
 Because it is using digital symbols over 2FSK modulation, it essentially looks
 like two separate, simultaneous, out-of-phase OOK transmissions 100 kHz away
-from each other, at 916.75 MHz and and 916.85 MHz.
+from each other, at 916.85 MHz and and 916.75 MHz.  In FSK parlance, these higher
+and lower frequencies are respectively referred to as the "mark" and "space" 
+frequencies.
 
-If you choose to visually look at only one of those frequencies as an OOK
+If you choose to visually look at only one of those frequencies as an ASK/OOK
 transmission (such as with SDR# or gqrx), it may make sense to choose the higher
-916.85 MHz frequency, since its phase will represent a "LOW" symbol as a low
-level on the waveform, and a "HIGH" symbol will look like a high level.
+"mark" 916.85 MHz frequency, since its phase would represent a "HIGH" symbol as a 
+high signal level, and a "LOW" symbol would be the absense of a signal.
 
 Data bits are encoded over three symbols. A "0" bit is defined as HIGH-LOW-LOW,
 and a "1" bit is defined as "HIGH-HIGH-LOW".
 
-Each frame of data consists of a LOW-LOW-LOW preamble, 48 bits of data, and a
-postamble of HIGH-HIGH-HIGH.
+Each frame of data consists of a LOW-LOW-LOW signal preamble, 48 bits (144 
+symbols) of data, and a postamble of HIGH-HIGH-HIGH.
 
 The signal seems to be 50 consecutive repetitions of the frame, then symbols
 LOW-LOW-LOW-HIGH-HIGH-HIGH, and finally 2 continuous milliseconds (2000 μs) of
@@ -110,7 +122,7 @@ ascertain about the data in the frame.
 	# .... .... .... .... .... .... .... .... .... .... .... X... RELAY (1 if signal is a retransmission of a received transmission, only some models)
 	# .... .... .... .... .... .... .... .... .... .... .... .X.. FLAG UNKNOWN (0 = default, but 1 is accepted and I don't oberserve any effects)
 	# .... .... .... .... .... .... .... .... .... .... .... ..X. LOWBAT (1 if battery is low, receiver gives low battery alert)
-	# .... .... .... .... .... .... .... .... .... .... .... ...X PARITY (LSB of count of set bits in previous 39 bits)
+	# .... .... .... .... .... .... .... .... .... .... .... ...X PARITY (LSB of count of set bits in previous 47 bits)
 
 ### Data Frame RELAY Notes:
 
@@ -188,6 +200,10 @@ r.RFxmit(data=pwm_signal_bytes)
 ```
 
 ## References
+
+- User [tos7](https://www.rtl-sdr.com/forum/memberlist.php?mode=viewprofile&u=1539) performed
+some earlier valuable analysis of this hardware and signal as 
+[detailed on an rtl-sdr.com forum post](https://www.rtl-sdr.com/forum/viewtopic.php?t=1138).
 
 - [rtl_433](https://github.com/merbanan/rtl_433) is an incredible and essential
 piece of software. I still have much of it to learn.
