@@ -18,9 +18,18 @@ support a device protocol for this series of Honeywell devices. Further effort
 into creating a device protocol driver for rtl_433 is an eventual goal.
 
 I'm also able to transmit valid signals to these Honeywell receivers using the
-[YARD Stick One](https://greatscottgadgets.com/yardstickone/). Further efforts
-may include efforts into supporting this and other devices for transmitting and
-receiving valid signals.
+[YARD Stick One](https://greatscottgadgets.com/yardstickone/), which uses the
+[TI CC1111](http://www.ti.com/product/CC1110-CC1111) chipset.
+
+I've also had success transmitting a valid signal using the 
+[HopeRF RFM69HCW](http://www.hoperf.com/rf_transceiver/modules/RFM69HCW.html) 
+module, specifically as found as part of the 
+[Adafruit Feather 32u4 RFM69HCW Packet Radio](https://www.adafruit.com/product/3076) 
+device.
+
+Planned further efforts include working with modules that use the 
+[TI CC1101](http://www.ti.com/product/CC1101) chip, and maybe other modules that
+are able to support this signal.
 
 ### Awesome! I have an RTL-SDR dongle and one of those doorbells and I want to help!
 
@@ -89,8 +98,8 @@ YARD Stick One to create custom signals), here's what I've been able to
 ascertain about the data in the frame.
 
 	# Frame bits used in Honeywell RCWL300A, RCWL330A, Series 3, 5, 9 and all Decor Series Wireless Chimes
-	# 0000 0000 0000 0000 1111 1111 1111 1111 2222 2222 2222 2222
-	# 0123 4567 89ab cdef 0123 4567 89ab cdef 0123 4567 89ab cdef
+	# 0000 0000 1111 1111 2222 2222 3333 3333 4444 4444 5555 5555
+	# 7654 3210 7654 3210 7654 3210 7654 3210 7654 3210 7654 3210
 	# XXXX XXXX XXXX XXXX XXXX XXXX XXXX XXXX XXXX XX.. XXX. .... KEY DATA (any change and receiver doesn't seem to recognize signal)
 	# XXXX XXXX XXXX XXXX XXXX .... .... .... .... .... .... .... KEY ID (different for each transmitter)
 	# .... .... .... .... .... 0000 00.. 0000 0000 00.. 000. .... KEY UNKNOWN 0 (always 0 in devices I've tested)
@@ -99,9 +108,9 @@ ascertain about the data in the frame.
 	# .... .... .... .... .... .... .... .... .... ..XX .... .... ALERT (00 = normal, 01 or 10 = right-left halo light pattern, 11 = full volume alarm)
 	# .... .... .... .... .... .... .... .... .... .... ...X .... SECRET KNOCK (0 = default, 1 if doorbell is pressed 3x rapidly)
 	# .... .... .... .... .... .... .... .... .... .... .... X... RELAY (1 if signal is a retransmission of a received transmission, only some models)
-	# .... .... .... .... .... .... .... .... .... .... .... .X.. FLAG UNKNOWN (0 = default, but 1 is accepted and I don't oberserve any difference)
+	# .... .... .... .... .... .... .... .... .... .... .... .X.. FLAG UNKNOWN (0 = default, but 1 is accepted and I don't oberserve any effects)
 	# .... .... .... .... .... .... .... .... .... .... .... ..X. LOWBAT (1 if battery is low, receiver gives low battery alert)
-	# .... .... .... .... .... .... .... .... .... .... .... ...X PARITY (LSB of count of set bits in previous 23 bits)
+	# .... .... .... .... .... .... .... .... .... .... .... ...X PARITY (LSB of count of set bits in previous 39 bits)
 
 ### Data Frame RELAY Notes:
 
@@ -110,7 +119,6 @@ Portable Wireless Doorbell", the base receiver will immediately retransmit a
 valid received signal if the RELAY bit is NOT set. The data in the retransmitted
 signal will be modified with the RELAY bit set. This seems to be an effort to
 extend a signal to more distant receivers.
-
 
 ## Detecting signals using `rtl_433`
 
@@ -186,7 +194,7 @@ piece of software. I still have much of it to learn.
 
 - The [YARD Stick One](https://greatscottgadgets.com/yardstickone/) is also an
 incredible thing. Transmitting arbitrary digital signals to test out signal
-changes was essential. This made it easy.
+changes is essential to this project. This made it easy.
 	
 - [rfcat](https://github.com/atlas0fd00m/rfcat) is also essential to effectively
-tapping into the abilities of the YARD Stick One.
+tap into the abilities of the YARD Stick One.
