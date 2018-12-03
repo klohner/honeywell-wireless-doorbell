@@ -51,7 +51,7 @@ Those versions operate near 868 MHz amd are advertised as using "ActivLink"
 technology. I've read indications that those models also use the same
 transmission signal, though on that different frequency.
 
-## Hardware inside the Honeywell doorbell transmitter
+### Hardware inside the Honeywell doorbell transmitter
 
 User [tos7](https://www.rtl-sdr.com/forum/memberlist.php?mode=viewprofile&u=1539)
 has [detailed on an rtl-sdr.com forum](https://www.rtl-sdr.com/forum/viewtopic.php?t=1138) 
