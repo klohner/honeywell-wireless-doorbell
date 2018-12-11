@@ -1,21 +1,29 @@
-# Honeywell "ActivLink" Wireless Chimes
+# Honeywell "ActivLink" Wireless Devices
 
 ## What is this?
 
-An attempt to capture and decode the signals used by the North American
-Honeywell RCWL300A, RCWL330A, Series 3, 5, 9 and Decor Series Wireless Chimes.
-These units operate at 916.8 MHz. The protocol may be identical to European
-variants of these model devices, though those models may operate at or near 868
-MHz.
+This ia an attempt to capture and decode the signals used by the Honeywell ActivLink
+family of devices.  These devices are primarily wireless doorbell and PIR motion 
+detector systems in North America and and operate at 916.5 MHz.  Honeywell also
+uses this signal at 916.5 in Australia.  In European countries, it operates at
+868.3 MHz and the family of devices also include door/window sensors and home alarm
+kits.
 
-These devices are dissimilar to many other "dumb" wireless doorbells since they
-support various other sensors (such as motion sensors), and the signal protocol
-supports options for alarm triggers, relaying of signals, and parity checks.
+[There's some indication](https://livewell.honeywellhome.com/en/support/alarm-support/) 
+that this protocol may be based on the Friedland / Response 868MHz alarm system.  
+[This page](https://livewell.honeywellhome.com/en/faq/i-have-a-friedland-libra-wirefree-doorbell-system-can-i-replace-either-the-push-button-or-the-doorbell-with-products-from-the-new-honeywell-range-of-wireless-doorbells-and-push-buttons/) 
+indicates that the 868MHz variants of the Honeywell ActivLink system is compatible 
+with the Friedland Libra+ Wirefree Doorbell system.
+
+These devices are dissimilar to many other simple wireless doorbell systems in
+several ways.  They operate on a much higher frequency than most other
+wireless doorbells, use FSK modulation instead of ASK/OOK, and the signal protocol 
+supports multiple device types, signal flags, relay signals, battery low indication, 
+and a parity check.
 
 I'm using [rtl_433](https://github.com/merbanan/rtl_433) to receive and
-demodulate the signal using its default functionality -- it does not currently
-support a device protocol for this series of Honeywell devices. Further effort
-into creating a device protocol driver for rtl_433 is an eventual goal.
+demodulate the signal using its default functionality.  As of 2018-12-06, it
+supports this protocol.
 
 I'm also able to transmit valid signals to these Honeywell receivers using the
 [YARD Stick One](https://greatscottgadgets.com/yardstickone/), which uses the
@@ -31,35 +39,32 @@ Planned further efforts include working with modules that use the
 [TI CC1101](http://www.ti.com/product/CC1101) chip, and maybe other modules that
 are able to support this signal.
 
-### Awesome! I have an RTL-SDR dongle and one of those doorbells and I want to help!
+### How can I help?
 
-You're the best! I'm looking for as many valid signals as you can generate on
-your doorbell system to further decode the signal. If you have `rtl_433`
-installed and working on your system, please see if you can receive the signal
-and send me the output you receive here:
+If you're able to run [rtl_433](https://github.com/merbanan/rtl_433), and have access
+to one of these devices, I'd like to know which device you have and what 48-bit value 
+you receive from your device.
+
+Using a recent build of rtl_433, here's what you can use to get that value.
+
+North American and Australian devices:
+
+	rtl_433 -f 916800000 -q -R 0 -X n=Honeywell_ActivLink,m=FSK_PWM,s=160,l=320,r=400,y=480,invert,bits=48
+
+European devices (including Friedland Response and Libra+ devices):
+
+	rtl_433 -f 868300000 -q -R 0 -X n=Honeywell_ActivLink,m=FSK_PWM,s=160,l=320,r=400,y=480,invert,bits=48
 
 **[Submit My Doorbell Code To This Project](https://goo.gl/forms/SuxA3qgVRivXmNMf1)**
 
 Any kind of signal you can provide helps. I'm especially interested in signals
-from the motion detectors or other sensors used with this system.
-
-### Availability
-
-Although I've only personally tested on the North American models of this unit,
-it seems that these doorbells are also available in European model variants.
-Those versions operate near 868 MHz amd are advertised as using "ActivLink"
-technology. I've read indications that those models also use the same
-transmission signal, though on that different frequency.
-
-[There's some](https://livewell.honeywellhome.com/en/support/alarm-support/) [indication](https://livewell.honeywellhome.com/en/support/alarm-support/) that this protocol may be based on the Friedland / Response 868MHz alarm system.  [This FAQ](https://livewell.honeywellhome.com/en/support/doorbell-support/) 
-indicates that the 868MHz variants of the Honeywell ActivLink system is compatible 
-with the Friedland Libra+ Wirefree Doorbell system.  [An IQ sample from this system](https://www.sigidwiki.com/wiki/Friedland_Libra%2B_48249SL_wireless_doorbell) is available at the [Signal Identification Guide wiki](https://www.sigidwiki.com/wiki/Signal_Identification_Guide) and should be analyzed further.
+from the motion detectors and door/window sensors or other sensors used with this system.
 
 ### Hardware inside the Honeywell doorbell transmitter
 
 User [tos7](https://www.rtl-sdr.com/forum/memberlist.php?mode=viewprofile&u=1539)
 has [detailed on an rtl-sdr.com forum](https://www.rtl-sdr.com/forum/viewtopic.php?t=1138) 
-that the button contains a PIC Micro controller and a Transmitter chip.
+that the button contains a PIC Micro controller and a FSK Transmitter chip.
 
 - [PIC16F505](https://www.microchip.com/wwwproducts/en/PIC16F505)
 
@@ -68,7 +73,7 @@ that the button contains a PIC Micro controller and a Transmitter chip.
 ## The Wireless Signal
 
 The Honeywell wireless transmitter I have direct access to is the RPWL400W,
-though I was able to look at three of them. I also have tested with a Series 9
+though I was able to look at several of them. I also have tested with a Series 9
 and Series 3 receiver.
 
 When the wireless doorbell button is pressed, it sends out a signal centered at
@@ -81,11 +86,6 @@ like two separate, simultaneous, out-of-phase OOK transmissions 100 kHz away
 from each other, at 916.85 MHz and and 916.75 MHz.  In FSK parlance, these higher
 and lower frequencies are respectively referred to as the "mark" and "space" 
 frequencies.
-
-If you choose to visually look at only one of those frequencies as an ASK/OOK
-transmission (such as with SDR# or gqrx), it may make sense to choose the higher
-"mark" 916.85 MHz frequency, since its phase would represent a "HIGH" symbol as a 
-high signal level, and a "LOW" symbol would be the absense of a signal.
 
 Data bits are encoded over three symbols. A "0" bit is defined as HIGH-LOW-LOW,
 and a "1" bit is defined as "HIGH-HIGH-LOW".
@@ -164,26 +164,17 @@ set. This seems to be an effort to extend a signal to more distant receivers.
 
 ## Detecting signals using `rtl_433`
 
-This seems to work pretty well to pick up data frames in the signal as symbol
-pulse bits represented in hex. Note that the returned length of these frames is
-149 bits (symbols) because it is decoding the frame's "HIGH-HIGH-HIGH" postamble
-into three "1" bits (symbols).
+This seems to work pretty well to pick up the signal frame data as hex in
+multiple rows:
 
-	rtl_433 -f 916800000 -q -X Honeywell:FSK_PCM:160:160:400,bits=149,match={4}0xe
-
-And this seems to work pretty well to pick up the signal frame data as hex. Note
-that the returned length of these frames is 49 bits because it is decoding the
-frame's "HIGH-HIGH-HIGH" postamble as a "1" bit.
-
-	rtl_433 -f 916800000 -q -X Honeywell:FSK_PWM_RAW:240:480:400,bits=49,invert,match={4}0x8
-		
-Note the "invert" option is specified here to provide a decoding consistent with
+	rtl_433 -f 916800000 -q -R 0 -X n=Honeywell_ActivLink,m=FSK_PWM,s=160,l=320,r=400,y=480,invert,bits=48
+	
+The "invert" option is specified here to provide a decoding consistent with
 this document.
 
-This seems to work pretty well to pick up the whole signal with frame data in
-rows as hex:
+Change the reset value to 560 to get all data in one row:
 
-	rtl_433 -f 916800000 -q -X Honeywell:FSK_PWM_RAW:240:400:560,bits=49,invert
+	rtl_433 -f 916800000 -q -R 0 -X n=Honeywell_ActivLink,m=FSK_PWM,s=160,l=320,r=400,y=480,invert,bits=48
 
 Note that these don't seem to pick up the all the data frames. In my tests, it
 only seems to pick up 24 of the 50 data frames in the signal before triggering
@@ -197,16 +188,10 @@ to work well to pick up the data frames. It also has the benefit that when the
 maximum number of pulses is reached, it doesn't trigger an error and starts
 decoding data again immediately.
 
-	rtl_433 -f 916890000 -q -X Honeywell:OOK_PWM:160:320:560:400,bits=49,invert
-
-And finally, tuning low and allowing `rtl_433` to guess the demodulation on its
-own, it will use `pulse_demod_pwm_precise()` and output a nice representation of
-the hex and bit values of the 48-bit data frames. However, it does seems to
-truncate after 24 rows of data frames.
-
-	rtl_433 -f 916710000 -q -R 0 -A
-
-
+	rtl_433 -f 916890000 -q -R 0 -X n=Honeywell_ActivLink,m=OOK_PWM,s=160,l=320,g=400,r=560,y=480,bits=48,invert
+	
+	rtl_433 -f 916710000 -q -R 0 -X n=Honeywell_ActivLink,m=OOK_PWM,s=160,l=320,g=400,r=560,y=480,bits=48
+	
 ## Transmitting a signal using a YARD Stick One
 
 Convert the signal you want to send as a hex value representing the symbols in
@@ -232,7 +217,7 @@ r.RFxmit(data=pwm_signal_bytes)
 ### Devices using this signal
 Here's an incomplete list of devices and kits known or suspected to use this signal.
 
-#### North American models
+#### North American Honeywell models
 - RCA902N1004/N Wireless Motion Detector
 - RDWL311A 3 Series Portable Wireless Doorbell & Push Button
 - RDWL313A 3 Series Portable Wireless Doorbell with Strobe Light & Push Button
@@ -259,7 +244,7 @@ Here's an incomplete list of devices and kits known or suspected to use this sig
 - RCWL3505A1005/N Decor Customizable Wood Wireless Doorbell / Door Chime and Push Button
 - RCWL3506A1003/N Decor Wireless Door Chime
 
-#### Australian models (916.8 MHz)
+#### Australian Honeywell models (916.8 MHz)
 - DC917NGA Wireless portable MP3 doorbell with range extender, customisable melodies and push button – Grey
 - DC515NA Wireless portable doorbell with halo light, sleep mode and push button – White
 - DC515NGA Wireless portable doorbell with halo light, sleep mode and push button – Grey
@@ -271,8 +256,7 @@ Here's an incomplete list of devices and kits known or suspected to use this sig
 - DCP511A Wireless push button with nameplate and LED confidence light – Offset Landscape, White
 - DCP511GA Wireless push button with nameplate and LED confidence light – Offset Landscape, Grey
 
-#### European models
-
+#### European Honeywell models
 - DW915SG Wired and wireless doorbell with range extender, sleep mode and halo light – Grey
 - DW915S Wired and wireless doorbell with range extender, sleep mode and halo light – White
 - DC917SL Wireless portable doorbell with range extender, customisable melodies and push button – White
@@ -316,6 +300,41 @@ Here's an incomplete list of devices and kits known or suspected to use this sig
 - HS3FOB1S Wireless remote control key fob
 - HS3BS1S Wireless battery siren
 - L430S Wireless Motion Sensor (IP54) – White
+
+#### European Friedland models:
+- Friedland Response SL2 Premium Wireless Multi User Alarm System
+- Friedland Response SL9 Premium Wireless Keypad Alarm System
+- Friedland Response SL3 Premium Wireless Multi Function and Zoning Alarm System
+- Friedland Response SL10 Wireless Apartment Alarm Kit
+- Friedland Response SL8 Premium Wireless Expanded Zoning Alarm System
+- Friedland Response SL5 Premium Wireless Telecommunicating Alarm System
+- Friedland Response SL7 Premium Wireless Auto Dial Alarm System 
+- Friedland Response HW2 Premium Wireless Movement (PIR) Detector
+- Friedland Response HW12 Premium Wireless External Lighting Controller
+- Friedland Response HW22 Premium Wireless Movement (PIR) Detector Twin Pack
+- Friedland Response HW3 Premium Wireless Remote Control
+- Friedland Response HW4 Premium Wireless Door/Window Contact
+- Friedland Response HW44 Premium Wireless Door/Window Contact Twin pack
+- Friedland Response HW5 Premium Wireless Mounted Keypad
+- GlobalGuard Friedland Response HIS77A Wirefree Door/Window Contact (Twin Pack)
+- GlobalGuard Friedland Response HIS8A Wirefree PIR Movement Detector
+- GlobalGuard Friedland Response HIS88A Wireless Movement Detector (PIR) Twin Pack
+- GlobalGuard Friedland Response HIS9A Wireless Remote Control
+- GlobalGuard Friedland Response HIS10A Garage Door Sensor
+- GlobalGuard Friedland Response HIS2A Lampholders Twin Pack
+- GlobalGuard Friedland Response HIS1A Plug-in Socket
+- GlobalGuard Friedland Response HISK1 Wireless Home Alarm System
+- GlobalGuard Friedland Response FGGA0401WWE Solar Siren
+- Friedland Libra+ D911S Wireless Chime and Button
+- Friedland Libra+ D912S Wireless Chime and Button
+- Friedland Libra+ D914b Portable Door Chime Kit, with Brass Fronted Push
+- Friedland Libra+ D917 Additional Portable Chime
+- Friedland Libra+ D930 Wirefree White Bell Push
+- Friedland Libra+ D931 Wirefree Black/Silver Bell Push
+- Friedland Libra+ D934 Wirefree Converter Bell Push 
+- Friedland Libra+ D936 Telephone Ringer
+- Friedland Libra+ L430N Libra PIR
+
 
 ## References
 
