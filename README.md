@@ -10,8 +10,8 @@ uses this signal at 916.5 in Australia.  In European countries, it operates at
 kits.
 
 [There's some indication](https://livewell.honeywellhome.com/en/support/alarm-support/) 
-that this protocol may be based on the Friedland / Response 868MHz alarm system.  
-[This page](https://livewell.honeywellhome.com/en/faq/i-have-a-friedland-libra-wirefree-doorbell-system-can-i-replace-either-the-push-button-or-the-doorbell-with-products-from-the-new-honeywell-range-of-wireless-doorbells-and-push-buttons/) 
+that this protocol may be based on the Friedland / Response 868MHz alarm 
+system. [This page](https://livewell.honeywellhome.com/en/faq/i-have-a-friedland-libra-wirefree-doorbell-system-can-i-replace-either-the-push-button-or-the-doorbell-with-products-from-the-new-honeywell-range-of-wireless-doorbells-and-push-buttons/) 
 indicates that the 868MHz variants of the Honeywell ActivLink system is compatible 
 with the Friedland Libra+ Wirefree Doorbell system.
 
@@ -174,7 +174,7 @@ this document.
 
 Change the reset value to 560 to get all data in one row:
 
-	rtl_433 -f 916800000 -q -R 0 -X n=Honeywell_ActivLink,m=FSK_PWM,s=160,l=320,r=400,y=480,invert,bits=48
+	rtl_433 -f 916800000 -q -R 0 -X n=Honeywell_ActivLink,m=FSK_PWM,s=160,l=320,r=560,y=480,invert,bits=48
 
 Note that these don't seem to pick up the all the data frames. In my tests, it
 only seems to pick up 24 of the 50 data frames in the signal before triggering
